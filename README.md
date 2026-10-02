@@ -57,10 +57,17 @@ python benchmark/build_topology.py er 20 3 topo.json 42
 python benchmark/heuristic_benchmark.py heuristic_results.csv
 ```
 
-Both benchmark drivers use Ray with one fresh process per batch; for large `epoch_benchmark.py` sweeps, launch inside `tmux` and pipe to a log file:
+Run both experiments from `coreroute/benchmark/`; the only argument is the output CSV name, written to `benchmark/results/`:
 
 ```bash
-tmux new -s bench 'python benchmark/epoch_benchmark.py out.csv 2>&1 | tee out.log'
+python3 heuristic_benchmark.py [output.csv]   # Experiment 1 (default: heuristic_benchmark.csv); env vars: NUM_WORKERS (Ray workers, default 7), EPOCH_TIMEOUT (s per epoch, default 1800), BATCH_TIMEOUT (s per batch)
+python3 drift_bench.py [output.csv]           # Experiment 2, CR vs FULL (default: exp2.csv); Ray Tune uses all available CPUs
+```
+
+Experiment 2 is launched through `drift_bench.py`, which reuses the epoch logic of `epoch_benchmark.py` (the latter is a library, not a launcher). Both drivers use Ray; for long sweeps, launch inside `tmux` and pipe to a log file:
+
+```bash
+tmux new -s bench 'python3 drift_bench.py out.csv 2>&1 | tee out.log'
 ```
 
 ## Known limitations
