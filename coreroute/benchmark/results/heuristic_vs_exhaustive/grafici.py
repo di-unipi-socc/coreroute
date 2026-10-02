@@ -12,7 +12,7 @@ from matplotlib.patches import Patch
 
 HERE = Path(__file__).parent
 CSV_PATH = HERE / "data.csv"
-OUT_DIR = HERE / "graphs"
+OUT_DIR = HERE / "plots"
 OUT_DIR.mkdir(exist_ok=True)
 
 # --------------------------------------------------------------------------- identita' delle strategie
