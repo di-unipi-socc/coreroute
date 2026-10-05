@@ -7,6 +7,13 @@ from matplotlib.lines import Line2D
 from matplotlib.ticker import MaxNLocator
 
 plt.rcParams.update({"font.size": 18, "axes.labelpad": 16})
+sns.set_palette("colorblind")   # unica palette dei plot (default di hue/colori)
+
+# Font condivisi fra exp1 e exp2 (i valori sugli assi, tick, restano invariati)
+LABEL_FS        = 15   # etichette assi / etichette di riga
+TITLE_FS        = 15   # titoli dei pannelli
+LEGEND_FS       = 13   # testo legenda
+LEGEND_TITLE_FS = 14   # titolo legenda
 
 df = pd.read_csv("results.csv")
 
@@ -14,7 +21,7 @@ TOPOLOGIES      = ["iaag", "er", "ba"]
 PCT_MODS        = [0.1, 0.2, 0.3, 0.5]
 FLOW_FACTORS    = [1.0, 0.75, 0.5, 0.25]
 NODES           = [250, 500, 750, 1000]
-MODE_COLORS     = {"CR": "#0072B2", "FULL": "#D55E00"}
+MODE_COLORS     = {"CR": sns.color_palette("colorblind")[0], "FULL": sns.color_palette("colorblind")[3]}
 N_CONFIRMATORIA = 1000
 EPOCHS_SHOWN    = [0, 10, 19]
 PCT_MODS_SHOWN  = [0.1, 0.3, 0.5]
@@ -44,10 +51,10 @@ def speedup_heatmap():
                         annot_kws={"fontsize": 19}, linewidths=0.5, linecolor="white")
             ax.tick_params(labelsize=16)
             if i == 0:
-                ax.set_title(topology.upper(), fontsize=20)
+                ax.set_title(topology.upper(), fontsize=TITLE_FS, fontweight="bold")
             show_xlabel = i == len(PCT_MODS) - 1 and j == len(TOPOLOGIES) // 2
-            ax.set_xlabel("Nodes" if show_xlabel else "", fontsize=18)
-            ax.set_ylabel(f"Perturbation = {int(pct_mod * 100)}%\nFlow factor" if j == 0 else "", fontsize=18)
+            ax.set_xlabel("Nodes" if show_xlabel else "", fontsize=LABEL_FS)
+            ax.set_ylabel(f"Perturbation = {int(pct_mod * 100)}%\nFlow factor" if j == 0 else "", fontsize=LABEL_FS)
 
     plt.tight_layout()
     out_path = "plots/speedup_full_cr.pdf"
@@ -72,9 +79,9 @@ def speedup_heatmap_pct50():
                     vmin=vmin, vmax=vmax, cbar=False, ax=ax,
                     annot_kws={"fontsize": 19}, linewidths=0.5, linecolor="white")
         ax.tick_params(labelsize=16)
-        ax.set_title(topology.upper(), fontsize=20)
-        ax.set_xlabel("Nodes" if j == len(TOPOLOGIES) // 2 else "", fontsize=18)
-        ax.set_ylabel("Flow factor" if j == 0 else "", fontsize=18)
+        ax.set_title(topology.upper(), fontsize=TITLE_FS, fontweight="bold")
+        ax.set_xlabel("Nodes" if j == len(TOPOLOGIES) // 2 else "", fontsize=LABEL_FS)
+        ax.set_ylabel("Flow factor" if j == 0 else "", fontsize=LABEL_FS)
 
     plt.tight_layout()
     out_path = "plots/speedup_full_cr_pct50.pdf"
@@ -103,7 +110,7 @@ def diff_simm_vs_latency():
         kind="scatter", height=3.5, aspect=1.2, legend=False,
         s=60,
     )
-    g.set_axis_labels("Path delay (ms)", "Symm. distance", fontsize=18)
+    g.set_axis_labels("Path delay (ms)", "Symm. distance", fontsize=LABEL_FS)
     g.set_titles("")
     for ax in g.axes.flat:
         ax.tick_params(labelbottom=True, labelsize=15)
@@ -117,17 +124,17 @@ def diff_simm_vs_latency():
         for epoch in EPOCHS_SHOWN:
             ax = g.axes_dict[(topology, epoch)]
             if epoch == EPOCHS_SHOWN[0]:
-                ax.set_ylabel(f"{topology.upper()}\nSymm. distance", fontsize=18)
+                ax.set_ylabel(f"$\\mathbf{{{topology.upper()}}}$\nSymm. distance", fontsize=LABEL_FS)
             if topology == TOPOLOGIES[0]:
-                ax.set_title(f"Epoch {epoch}", fontsize=18)
+                ax.set_title(f"Epoch {epoch}", fontsize=TITLE_FS)
             # one xlabel for the whole grid, bottom row only
             if topology == last_topology and epoch == EPOCHS_SHOWN[len(EPOCHS_SHOWN) // 2]:
-                ax.set_xlabel("Path delay (ms)", fontsize=18)
+                ax.set_xlabel("Path delay (ms)", fontsize=LABEL_FS)
 
     # one legend for the whole grid, not one per row
     g.axes_dict[(TOPOLOGIES[0], EPOCHS_SHOWN[0])].legend(
         handles=legend_handles, title="Mode", loc="best",
-        fontsize=14, title_fontsize=15, frameon=False)
+        fontsize=LEGEND_FS, title_fontsize=LEGEND_TITLE_FS, frameon=False)
 
     g.tight_layout()
     out_path = "plots/diff_simm_vs_latency.pdf"
@@ -159,16 +166,16 @@ def diff_simm_vs_latency_iaag():
         s=60,
     )
     g.set(xlim=xlim)
-    g.set_ylabels("Symm. distance", fontsize=18)
+    g.set_ylabels("Symm. distance", fontsize=LABEL_FS)
     g.set_xlabels("")
     middle_epoch = EPOCHS_SHOWN[len(EPOCHS_SHOWN) // 2]
     for epoch, ax in g.axes_dict.items():
-        ax.set_title(f"Epoch {epoch}", fontsize=18)
+        ax.set_title(f"Epoch {epoch}", fontsize=TITLE_FS)
         ax.tick_params(labelsize=15)
         if epoch == middle_epoch:
-            ax.set_xlabel("Path delay (ms)", fontsize=18)
-    g._legend.set_title("Mode", prop={"size": 15})
-    plt.setp(g._legend.get_texts(), fontsize=14)
+            ax.set_xlabel("Path delay (ms)", fontsize=LABEL_FS)
+    g._legend.set_title("Mode", prop={"size": LEGEND_TITLE_FS})
+    plt.setp(g._legend.get_texts(), fontsize=LEGEND_FS)
 
     g.tight_layout()
     out_path = "plots/diff_simm_vs_latency_iaag.pdf"
@@ -190,11 +197,11 @@ def repair_workload():
                  hue_order=TOPOLOGIES, marker="o", errorbar="sd", ax=ax)
     ax.xaxis.set_major_locator(MaxNLocator(integer=True))
     ax.tick_params(labelsize=16)
-    ax.set_xlabel("Epoch", fontsize=18)
-    ax.set_ylabel("Flows KO", fontsize=18)
+    ax.set_xlabel("Epoch", fontsize=LABEL_FS)
+    ax.set_ylabel("Flows KO", fontsize=LABEL_FS)
     handles, _ = ax.get_legend_handles_labels()
     ax.legend(handles=handles, labels=[t.upper() for t in TOPOLOGIES],
-              title="Topology", fontsize=14, title_fontsize=15, frameon=False)
+              title="Topology", prop={"size": LEGEND_FS, "weight": "bold"}, title_fontsize=LEGEND_TITLE_FS, frameon=False)
 
     plt.tight_layout()
     out_path = "plots/repair_workload.pdf"
@@ -225,7 +232,7 @@ def flows_changed_vs_nodes():
         kind="line", markers=True,
         height=3, aspect=1.2,
     )
-    g.set_axis_labels("Nodes", "Flows changed (%)", fontsize=18)
+    g.set_axis_labels("Nodes", "Flows changed (%)", fontsize=LABEL_FS)
     g.set(xticks=NODES)
     g.tight_layout()
     out_path = "plots/flows_changed_vs_nodes.pdf"
@@ -252,13 +259,13 @@ def flows_changed_vs_epoch():
         kind="line", marker="o", errorbar="sd",
         height=4, aspect=1.2,
     )
-    g.set_axis_labels("Epoch", "Flows changed (%)", fontsize=18)
+    g.set_axis_labels("Epoch", "Flows changed (%)", fontsize=LABEL_FS)
     for topology, ax in g.axes_dict.items():
-        ax.set_title(topology.upper(), fontsize=18)
+        ax.set_title(topology.upper(), fontsize=TITLE_FS, fontweight="bold")
         ax.tick_params(labelsize=15)
         ax.xaxis.set_major_locator(MaxNLocator(integer=True))
-    g._legend.set_title("Mode", prop={"size": 15})
-    plt.setp(g._legend.get_texts(), fontsize=14)
+    g._legend.set_title("Mode", prop={"size": LEGEND_TITLE_FS})
+    plt.setp(g._legend.get_texts(), fontsize=LEGEND_FS)
 
     g.tight_layout()
     out_path = "plots/flows_changed_vs_epoch.pdf"
@@ -291,14 +298,14 @@ def _style_workload_grid(g: sns.FacetGrid) -> None:
         ax.set_xlabel("")
         ax.set_ylabel("")
         if pct_mod == PCT_MODS[0]:
-            ax.set_title(f"Flow factor = {flow_factor}", fontsize=16)
+            ax.set_title(f"Flow factor = {flow_factor}", fontsize=TITLE_FS)
         if flow_factor == FLOW_FACTORS[0]:
-            ax.set_ylabel(f"Perturbation = {int(pct_mod * 100)}%\nSpeedup", fontsize=15)
+            ax.set_ylabel(f"Perturbation = {int(pct_mod * 100)}%\nSpeedup", fontsize=LABEL_FS)
         if pct_mod == PCT_MODS[-1] and flow_factor == FLOW_FACTORS[len(FLOW_FACTORS) // 2]:
-            ax.set_xlabel("Flows requiring repair (%)", fontsize=18)
+            ax.set_xlabel("Flows requiring repair (%)", fontsize=LABEL_FS)
 
-    g._legend.set_title("Topology", prop={"size": 15})
-    plt.setp(g._legend.get_texts(), fontsize=14)
+    g._legend.set_title("Topology", prop={"size": LEGEND_TITLE_FS})
+    plt.setp(g._legend.get_texts(), fontsize=LEGEND_FS)
     g.tight_layout()
 
 
@@ -365,15 +372,15 @@ def speedup_vs_workload_errorbar():
                             fmt="o", color=colors[topology], capsize=3)
             ax.tick_params(labelsize=14)
             if i == 0:
-                ax.set_title(f"Flow factor = {flow_factor}", fontsize=16)
+                ax.set_title(f"Flow factor = {flow_factor}", fontsize=TITLE_FS)
             if j == 0:
-                ax.set_ylabel(f"Perturbation = {int(pct_mod * 100)}%\nSpeedup", fontsize=15)
+                ax.set_ylabel(f"Perturbation = {int(pct_mod * 100)}%\nSpeedup", fontsize=LABEL_FS)
             if i == len(PCT_MODS) - 1 and j == len(FLOW_FACTORS) // 2:
-                ax.set_xlabel("Flows requiring repair (%)", fontsize=18)
+                ax.set_xlabel("Flows requiring repair (%)", fontsize=LABEL_FS)
 
     handles = [Line2D([0], [0], marker="o", linestyle="", color=c, label=t.upper())
                for t, c in colors.items()]
-    axes[0, 0].legend(handles=handles, title="Topology", fontsize=12, title_fontsize=13, frameon=False)
+    axes[0, 0].legend(handles=handles, title="Topology", prop={"size": LEGEND_FS, "weight": "bold"}, title_fontsize=LEGEND_TITLE_FS, frameon=False)
 
     plt.tight_layout()
     out_path = "plots/speedup_vs_workload_errorbar.pdf"
@@ -398,13 +405,13 @@ def speedup_vs_workload_scatter_flowfactor():
             row = cell[cell["topology"] == topology]
             ax.scatter(row["pct_ko"], row["speedup"], color=colors[topology], s=40)
         ax.tick_params(labelsize=14)
-        ax.set_title(f"Flow factor = {flow_factor}", fontsize=16)
-        ax.set_ylabel("Speedup" if j == 0 else "", fontsize=18)
-    axes[len(FLOW_FACTORS) // 2].set_xlabel("Flows requiring repair (%)", fontsize=18)
+        ax.set_title(f"Flow factor = {flow_factor}", fontsize=TITLE_FS)
+        ax.set_ylabel("Speedup" if j == 0 else "", fontsize=LABEL_FS)
+    axes[len(FLOW_FACTORS) // 2].set_xlabel("Flows requiring repair (%)", fontsize=LABEL_FS)
 
     handles = [Line2D([0], [0], marker="o", linestyle="", color=c, label=t.upper())
                for t, c in colors.items()]
-    axes[0].legend(handles=handles, title="Topology", fontsize=12, title_fontsize=13, frameon=False)
+    axes[0].legend(handles=handles, title="Topology", prop={"size": LEGEND_FS, "weight": "bold"}, title_fontsize=LEGEND_TITLE_FS, frameon=False)
 
     plt.tight_layout()
     out_path = "plots/speedup_vs_workload_scatter_flowfactor.pdf"
@@ -429,13 +436,13 @@ def speedup_vs_workload_scatter_pctmod():
             row = cell[cell["topology"] == topology]
             ax.scatter(row["pct_ko"], row["speedup"], color=colors[topology], s=40)
         ax.tick_params(labelsize=14)
-        ax.set_title(f"Perturbation = {int(pct_mod * 100)}%", fontsize=16)
-        ax.set_ylabel("Speedup" if j == 0 else "", fontsize=18)
-    axes[len(PCT_MODS) // 2].set_xlabel("Flows requiring repair (%)", fontsize=18)
+        ax.set_title(f"Perturbation = {int(pct_mod * 100)}%", fontsize=TITLE_FS)
+        ax.set_ylabel("Speedup" if j == 0 else "", fontsize=LABEL_FS)
+    axes[len(PCT_MODS) // 2].set_xlabel("Flows requiring repair (%)", fontsize=LABEL_FS)
 
     handles = [Line2D([0], [0], marker="o", linestyle="", color=c, label=t.upper())
                for t, c in colors.items()]
-    axes[0].legend(handles=handles, title="Topology", fontsize=12, title_fontsize=13, frameon=False)
+    axes[0].legend(handles=handles, title="Topology", prop={"size": LEGEND_FS, "weight": "bold"}, title_fontsize=LEGEND_TITLE_FS, frameon=False)
 
     plt.tight_layout()
     out_path = "plots/speedup_vs_workload_scatter_pctmod.pdf"
@@ -460,15 +467,15 @@ def speedup_vs_workload_scatter_n_pctmod():
                 ax.scatter(row["pct_ko"], row["speedup"], color=colors[topology], s=40)
             ax.tick_params(labelsize=14)
             if i == 0:
-                ax.set_title(f"Perturbation = {int(pct_mod * 100)}%", fontsize=16)
+                ax.set_title(f"Perturbation = {int(pct_mod * 100)}%", fontsize=TITLE_FS)
             if j == 0:
-                ax.set_ylabel(f"n = {n}\nSpeedup", fontsize=15)
+                ax.set_ylabel(f"n = {n}\nSpeedup", fontsize=LABEL_FS)
             if i == len(NODES) - 1 and j == len(PCT_MODS) // 2:
-                ax.set_xlabel("Flows requiring repair (%)", fontsize=18)
+                ax.set_xlabel("Flows requiring repair (%)", fontsize=LABEL_FS)
 
     handles = [Line2D([0], [0], marker="o", linestyle="", color=c, label=t.upper())
                for t, c in colors.items()]
-    axes[0, 0].legend(handles=handles, title="Topology", fontsize=12, title_fontsize=13, frameon=False)
+    axes[0, 0].legend(handles=handles, title="Topology", prop={"size": LEGEND_FS, "weight": "bold"}, title_fontsize=LEGEND_TITLE_FS, frameon=False)
 
     plt.tight_layout()
     out_path = "plots/speedup_vs_workload_scatter_n_pctmod.pdf"
@@ -493,11 +500,11 @@ def speedup_vs_workload_scatter_topology_pctmod():
                 ax.scatter(row["pct_ko"], row["speedup"], color=colors[flow_factor], s=40)
             ax.tick_params(labelsize=14)
             if i == 0:
-                ax.set_title(f"Perturbation = {int(pct_mod * 100)}%", fontsize=16)
+                ax.set_title(f"Perturbation = {int(pct_mod * 100)}%", fontsize=TITLE_FS)
             if j == 0:
-                ax.set_ylabel(f"$\\mathbf{{{topology.upper()}}}$\nSpeedup", fontsize=15)
+                ax.set_ylabel(f"$\\mathbf{{{topology.upper()}}}$\nSpeedup", fontsize=LABEL_FS)
             if i == len(TOPOLOGIES) - 1 and j == len(PCT_MODS_SHOWN) // 2:
-                ax.set_xlabel("Flows KO (%)", fontsize=18)
+                ax.set_xlabel("Flows KO (%)", fontsize=LABEL_FS)
 
     handles = [Line2D([0], [0], linestyle="", marker="", label="Flow factor:")] + [
         Line2D([0], [0], marker="o", linestyle="", color=c, markersize=14, label=f"{ff}")
@@ -505,7 +512,7 @@ def speedup_vs_workload_scatter_topology_pctmod():
     ]
     fig.legend(handles=handles, loc="upper center",
                bbox_to_anchor=(0.5, 1.05), ncol=len(handles),
-               fontsize=16, frameon=False, handletextpad=0.5, columnspacing=1.2)
+               fontsize=LEGEND_FS, frameon=False, handletextpad=0.5, columnspacing=1.2)
 
     plt.tight_layout()
     out_path = "plots/speedup_vs_workload_scatter_topology_pctmod.pdf"
@@ -528,11 +535,11 @@ def speedup_vs_workload_scatter_iaag():
             row = cell[cell["flow_factor"] == flow_factor]
             ax.scatter(row["pct_ko"], row["speedup"], color=colors[flow_factor], s=40)
         ax.tick_params(labelsize=14)
-        ax.set_title(f"Perturbation = {int(pct_mod * 100)}%", fontsize=16)
+        ax.set_title(f"Perturbation = {int(pct_mod * 100)}%", fontsize=TITLE_FS)
         if j == 0:
-            ax.set_ylabel("$\\mathbf{IAAG}$\nSpeedup", fontsize=15)
+            ax.set_ylabel("$\\mathbf{IAAG}$\nSpeedup", fontsize=LABEL_FS)
         if j == len(PCT_MODS_SHOWN) // 2:
-            ax.set_xlabel("Flows KO (%)", fontsize=18)
+            ax.set_xlabel("Flows KO (%)", fontsize=LABEL_FS)
 
     handles = [Line2D([0], [0], linestyle="", marker="", label="Flow factor:")] + [
         Line2D([0], [0], marker="o", linestyle="", color=c, markersize=14, label=f"{ff}")
@@ -540,7 +547,7 @@ def speedup_vs_workload_scatter_iaag():
     ]
     fig.legend(handles=handles, loc="upper center",
                bbox_to_anchor=(0.5, 1.1), ncol=len(handles),
-               fontsize=16, frameon=False, handletextpad=0.5, columnspacing=1.2)
+               fontsize=LEGEND_FS, frameon=False, handletextpad=0.5, columnspacing=1.2)
 
     plt.tight_layout()
     out_path = "plots/speedup_vs_workload_scatter_iaag.pdf"
@@ -550,18 +557,7 @@ def speedup_vs_workload_scatter_iaag():
 
 
 if __name__ == "__main__":
-    speedup_heatmap()
-    speedup_heatmap_pct50()
-    diff_simm_vs_latency()
     diff_simm_vs_latency_iaag()
-    repair_workload()
-    flows_changed_vs_nodes()
-    flows_changed_vs_epoch()
-    speedup_vs_workload_scatter()
-    speedup_vs_workload_line()
-    speedup_vs_workload_errorbar()
-    speedup_vs_workload_scatter_flowfactor()
-    speedup_vs_workload_scatter_pctmod()
-    speedup_vs_workload_scatter_n_pctmod()
+    diff_simm_vs_latency()
+    speedup_heatmap()
     speedup_vs_workload_scatter_topology_pctmod()
-    speedup_vs_workload_scatter_iaag()
