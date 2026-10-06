@@ -54,7 +54,7 @@ def speedup_heatmap():
                 ax.set_title(topology.upper(), fontsize=TITLE_FS, fontweight="bold")
             show_xlabel = i == len(PCT_MODS) - 1 and j == len(TOPOLOGIES) // 2
             ax.set_xlabel("Nodes" if show_xlabel else "", fontsize=LABEL_FS)
-            ax.set_ylabel(f"Perturbation = {int(pct_mod * 100)}%\nFlow factor" if j == 0 else "", fontsize=LABEL_FS)
+            ax.set_ylabel(f"$\\mathbf{{Perturbation\\ =\\ {int(pct_mod * 100)}\\%}}$\nFlow factor" if j == 0 else "", fontsize=LABEL_FS)
 
     plt.tight_layout()
     out_path = "plots/speedup_full_cr.pdf"
@@ -126,7 +126,7 @@ def diff_simm_vs_latency():
             if epoch == EPOCHS_SHOWN[0]:
                 ax.set_ylabel(f"$\\mathbf{{{topology.upper()}}}$\nSymm. distance", fontsize=LABEL_FS)
             if topology == TOPOLOGIES[0]:
-                ax.set_title(f"Epoch {epoch}", fontsize=TITLE_FS)
+                ax.set_title(f"Epoch {epoch}", fontsize=TITLE_FS, fontweight="bold")
             # one xlabel for the whole grid, bottom row only
             if topology == last_topology and epoch == EPOCHS_SHOWN[len(EPOCHS_SHOWN) // 2]:
                 ax.set_xlabel("Path delay (ms)", fontsize=LABEL_FS)
@@ -170,7 +170,7 @@ def diff_simm_vs_latency_iaag():
     g.set_xlabels("")
     middle_epoch = EPOCHS_SHOWN[len(EPOCHS_SHOWN) // 2]
     for epoch, ax in g.axes_dict.items():
-        ax.set_title(f"Epoch {epoch}", fontsize=TITLE_FS)
+        ax.set_title(f"Epoch {epoch}", fontsize=TITLE_FS, fontweight="bold")
         ax.tick_params(labelsize=15)
         if epoch == middle_epoch:
             ax.set_xlabel("Path delay (ms)", fontsize=LABEL_FS)
@@ -300,7 +300,7 @@ def _style_workload_grid(g: sns.FacetGrid) -> None:
         if pct_mod == PCT_MODS[0]:
             ax.set_title(f"Flow factor = {flow_factor}", fontsize=TITLE_FS)
         if flow_factor == FLOW_FACTORS[0]:
-            ax.set_ylabel(f"Perturbation = {int(pct_mod * 100)}%\nSpeedup", fontsize=LABEL_FS)
+            ax.set_ylabel(f"$\\mathbf{{Perturbation\\ =\\ {int(pct_mod * 100)}\\%}}$\nSpeedup", fontsize=LABEL_FS)
         if pct_mod == PCT_MODS[-1] and flow_factor == FLOW_FACTORS[len(FLOW_FACTORS) // 2]:
             ax.set_xlabel("Flows requiring repair (%)", fontsize=LABEL_FS)
 
@@ -374,7 +374,7 @@ def speedup_vs_workload_errorbar():
             if i == 0:
                 ax.set_title(f"Flow factor = {flow_factor}", fontsize=TITLE_FS)
             if j == 0:
-                ax.set_ylabel(f"Perturbation = {int(pct_mod * 100)}%\nSpeedup", fontsize=LABEL_FS)
+                ax.set_ylabel(f"$\\mathbf{{Perturbation\\ =\\ {int(pct_mod * 100)}\\%}}$\nSpeedup", fontsize=LABEL_FS)
             if i == len(PCT_MODS) - 1 and j == len(FLOW_FACTORS) // 2:
                 ax.set_xlabel("Flows requiring repair (%)", fontsize=LABEL_FS)
 
@@ -436,7 +436,7 @@ def speedup_vs_workload_scatter_pctmod():
             row = cell[cell["topology"] == topology]
             ax.scatter(row["pct_ko"], row["speedup"], color=colors[topology], s=40)
         ax.tick_params(labelsize=14)
-        ax.set_title(f"Perturbation = {int(pct_mod * 100)}%", fontsize=TITLE_FS)
+        ax.set_title(f"Perturbation = {int(pct_mod * 100)}%", fontsize=TITLE_FS, fontweight="bold")
         ax.set_ylabel("Speedup" if j == 0 else "", fontsize=LABEL_FS)
     axes[len(PCT_MODS) // 2].set_xlabel("Flows requiring repair (%)", fontsize=LABEL_FS)
 
@@ -467,7 +467,7 @@ def speedup_vs_workload_scatter_n_pctmod():
                 ax.scatter(row["pct_ko"], row["speedup"], color=colors[topology], s=40)
             ax.tick_params(labelsize=14)
             if i == 0:
-                ax.set_title(f"Perturbation = {int(pct_mod * 100)}%", fontsize=TITLE_FS)
+                ax.set_title(f"Perturbation = {int(pct_mod * 100)}%", fontsize=TITLE_FS, fontweight="bold")
             if j == 0:
                 ax.set_ylabel(f"n = {n}\nSpeedup", fontsize=LABEL_FS)
             if i == len(NODES) - 1 and j == len(PCT_MODS) // 2:
@@ -500,7 +500,7 @@ def speedup_vs_workload_scatter_topology_pctmod():
                 ax.scatter(row["pct_ko"], row["speedup"], color=colors[flow_factor], s=40)
             ax.tick_params(labelsize=14)
             if i == 0:
-                ax.set_title(f"Perturbation = {int(pct_mod * 100)}%", fontsize=TITLE_FS)
+                ax.set_title(f"Perturbation = {int(pct_mod * 100)}%", fontsize=TITLE_FS, fontweight="bold")
             if j == 0:
                 ax.set_ylabel(f"$\\mathbf{{{topology.upper()}}}$\nSpeedup", fontsize=LABEL_FS)
             if i == len(TOPOLOGIES) - 1 and j == len(PCT_MODS_SHOWN) // 2:
@@ -535,7 +535,7 @@ def speedup_vs_workload_scatter_iaag():
             row = cell[cell["flow_factor"] == flow_factor]
             ax.scatter(row["pct_ko"], row["speedup"], color=colors[flow_factor], s=40)
         ax.tick_params(labelsize=14)
-        ax.set_title(f"Perturbation = {int(pct_mod * 100)}%", fontsize=TITLE_FS)
+        ax.set_title(f"Perturbation = {int(pct_mod * 100)}%", fontsize=TITLE_FS, fontweight="bold")
         if j == 0:
             ax.set_ylabel("$\\mathbf{IAAG}$\nSpeedup", fontsize=LABEL_FS)
         if j == len(PCT_MODS_SHOWN) // 2:
@@ -556,8 +556,42 @@ def speedup_vs_workload_scatter_iaag():
     print(f"Saved {out_path}")
 
 
+def failed_flows():
+    """Share of flows still KO after repair (N_KO - N_R), CR vs FULL: grouped
+    bars, one panel per topology, perturbation severity on x. Pooled over n,
+    flow_factor, epoch and seed."""
+    sub = df.copy()
+    sub["pct_failed"] = 100 * (sub["N_KO"] - sub["N_R"]) / sub["num_flows"]
+
+    g = sns.catplot(
+        data=sub, kind="bar",
+        x="pct_mod", y="pct_failed", hue="mode", hue_order=list(MODE_COLORS),
+        palette=MODE_COLORS, col="topology", col_order=TOPOLOGIES,
+        errorbar=None, height=4, aspect=1, sharey=True, legend=False,
+    )
+    g.set_titles("")
+    g.set_xticklabels([f"{int(p * 100)}%" for p in PCT_MODS])
+    for topology, ax in g.axes_dict.items():
+        ax.tick_params(labelsize=14)
+        ax.set_title(topology.upper(), fontsize=TITLE_FS, fontweight="bold")
+        ax.set_xlabel("")
+        ax.set_ylabel("Flows failed (%)" if topology == TOPOLOGIES[0] else "", fontsize=LABEL_FS)
+    g.axes_dict[TOPOLOGIES[len(TOPOLOGIES) // 2]].set_xlabel("Perturbation", fontsize=LABEL_FS)
+
+    handles = [Line2D([0], [0], marker="s", linestyle="", color=c, markersize=14, label=m)
+               for m, c in MODE_COLORS.items()]
+    g.fig.legend(handles=handles, loc="upper center", bbox_to_anchor=(0.5, 1.08),
+                 ncol=len(handles), fontsize=LEGEND_FS, frameon=False)
+
+    g.tight_layout()
+    out_path = "plots/failed_flows.pdf"
+    g.savefig(out_path, bbox_inches="tight")
+    print(f"Saved {out_path}")
+
+
 if __name__ == "__main__":
     diff_simm_vs_latency_iaag()
     diff_simm_vs_latency()
     speedup_heatmap()
     speedup_vs_workload_scatter_topology_pctmod()
+    failed_flows()
