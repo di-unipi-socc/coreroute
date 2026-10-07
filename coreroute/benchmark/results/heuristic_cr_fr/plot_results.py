@@ -117,7 +117,8 @@ def diff_simm_vs_latency():
         ax.set_xlabel("")
         ax.xaxis.label.set_visible(True)
 
-    legend_handles = [Line2D([0], [0], marker="o", linestyle="", color=c, label=m)
+    legend_handles = [Line2D([0], [0], marker="o", linestyle="", color=c,
+                               label=("FR" if m == "FULL" else m))
                        for m, c in MODE_COLORS.items()]
     last_topology = TOPOLOGIES[-1]
     for topology in TOPOLOGIES:
@@ -175,6 +176,9 @@ def diff_simm_vs_latency_iaag():
         if epoch == middle_epoch:
             ax.set_xlabel("Path delay (ms)", fontsize=LABEL_FS)
     g._legend.set_title("Mode", prop={"size": LEGEND_TITLE_FS})
+    for text in g._legend.get_texts():
+        if text.get_text() == "FULL":
+            text.set_text("FR")
     plt.setp(g._legend.get_texts(), fontsize=LEGEND_FS)
 
     g.tight_layout()
@@ -578,7 +582,8 @@ def failed_flows():
         ax.set_ylabel("Flows failed (%)" if topology == TOPOLOGIES[0] else "", fontsize=LABEL_FS)
     g.axes_dict[TOPOLOGIES[len(TOPOLOGIES) // 2]].set_xlabel("Perturbation", fontsize=LABEL_FS)
 
-    handles = [Line2D([0], [0], marker="s", linestyle="", color=c, markersize=14, label=m)
+    handles = [Line2D([0], [0], marker="s", linestyle="", color=c, markersize=14,
+                       label=("FR" if m == "FULL" else m))
                for m, c in MODE_COLORS.items()]
     g.fig.legend(handles=handles, loc="upper center", bbox_to_anchor=(0.5, 1.08),
                  ncol=len(handles), fontsize=LEGEND_FS, frameon=False)
