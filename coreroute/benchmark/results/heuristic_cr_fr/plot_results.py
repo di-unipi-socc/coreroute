@@ -54,7 +54,10 @@ def speedup_heatmap():
                 ax.set_title(topology.upper(), fontsize=TITLE_FS, fontweight="bold")
             show_xlabel = i == len(PCT_MODS) - 1 and j == len(TOPOLOGIES) // 2
             ax.set_xlabel("Nodes" if show_xlabel else "", fontsize=LABEL_FS)
-            ax.set_ylabel(f"$\\mathbf{{Perturbation\\ =\\ {int(pct_mod * 100)}\\%}}$\nFlow factor" if j == 0 else "", fontsize=LABEL_FS)
+            ax.set_ylabel("Flow factor" if j == 0 else "", fontsize=LABEL_FS)
+            if j == len(TOPOLOGIES) - 1:
+                ax.text(1.03, 0.5, f"Perturbation = {int(pct_mod * 100)}%", transform=ax.transAxes, rotation=270,
+                        ha="left", va="center", fontsize=LABEL_FS, fontweight="bold")
 
     plt.tight_layout()
     out_path = "plots/speedup_full_cr.pdf"
@@ -125,7 +128,10 @@ def diff_simm_vs_latency():
         for epoch in EPOCHS_SHOWN:
             ax = g.axes_dict[(topology, epoch)]
             if epoch == EPOCHS_SHOWN[0]:
-                ax.set_ylabel(f"$\\mathbf{{{topology.upper()}}}$\nSymm. distance", fontsize=LABEL_FS)
+                ax.set_ylabel("Symm. distance", fontsize=LABEL_FS)
+            if epoch == EPOCHS_SHOWN[-1]:
+                ax.text(1.03, 0.5, topology.upper(), transform=ax.transAxes, rotation=270,
+                        ha="left", va="center", fontsize=LABEL_FS, fontweight="bold")
             if topology == TOPOLOGIES[0]:
                 ax.set_title(f"Epoch {epoch}", fontsize=TITLE_FS, fontweight="bold")
             # one xlabel for the whole grid, bottom row only
@@ -304,7 +310,10 @@ def _style_workload_grid(g: sns.FacetGrid) -> None:
         if pct_mod == PCT_MODS[0]:
             ax.set_title(f"Flow factor = {flow_factor}", fontsize=TITLE_FS)
         if flow_factor == FLOW_FACTORS[0]:
-            ax.set_ylabel(f"$\\mathbf{{Perturbation\\ =\\ {int(pct_mod * 100)}\\%}}$\nSpeedup", fontsize=LABEL_FS)
+            ax.set_ylabel("Speedup", fontsize=LABEL_FS)
+        if flow_factor == FLOW_FACTORS[-1]:
+            ax.text(1.03, 0.5, f"Perturbation = {int(pct_mod * 100)}%", transform=ax.transAxes, rotation=270,
+                    ha="left", va="center", fontsize=LABEL_FS, fontweight="bold")
         if pct_mod == PCT_MODS[-1] and flow_factor == FLOW_FACTORS[len(FLOW_FACTORS) // 2]:
             ax.set_xlabel("Flows requiring repair (%)", fontsize=LABEL_FS)
 
@@ -378,7 +387,10 @@ def speedup_vs_workload_errorbar():
             if i == 0:
                 ax.set_title(f"Flow factor = {flow_factor}", fontsize=TITLE_FS)
             if j == 0:
-                ax.set_ylabel(f"$\\mathbf{{Perturbation\\ =\\ {int(pct_mod * 100)}\\%}}$\nSpeedup", fontsize=LABEL_FS)
+                ax.set_ylabel("Speedup", fontsize=LABEL_FS)
+            if j == len(FLOW_FACTORS) - 1:
+                ax.text(1.03, 0.5, f"Perturbation = {int(pct_mod * 100)}%", transform=ax.transAxes, rotation=270,
+                        ha="right", va="center", fontsize=LABEL_FS, fontweight="bold")
             if i == len(PCT_MODS) - 1 and j == len(FLOW_FACTORS) // 2:
                 ax.set_xlabel("Flows requiring repair (%)", fontsize=LABEL_FS)
 
@@ -473,7 +485,10 @@ def speedup_vs_workload_scatter_n_pctmod():
             if i == 0:
                 ax.set_title(f"Perturbation = {int(pct_mod * 100)}%", fontsize=TITLE_FS, fontweight="bold")
             if j == 0:
-                ax.set_ylabel(f"n = {n}\nSpeedup", fontsize=LABEL_FS)
+                ax.set_ylabel("Speedup", fontsize=LABEL_FS)
+            if j == len(PCT_MODS) - 1:
+                ax.text(1.03, 0.5, f"nodes = {n}", transform=ax.transAxes, rotation=270,
+                        ha="left", va="center", fontsize=LABEL_FS, fontweight="bold")
             if i == len(NODES) - 1 and j == len(PCT_MODS) // 2:
                 ax.set_xlabel("Flows requiring repair (%)", fontsize=LABEL_FS)
 
@@ -506,7 +521,10 @@ def speedup_vs_workload_scatter_topology_pctmod():
             if i == 0:
                 ax.set_title(f"Perturbation = {int(pct_mod * 100)}%", fontsize=TITLE_FS, fontweight="bold")
             if j == 0:
-                ax.set_ylabel(f"$\\mathbf{{{topology.upper()}}}$\nSpeedup", fontsize=LABEL_FS)
+                ax.set_ylabel("Speedup", fontsize=LABEL_FS)
+            if j == len(PCT_MODS_SHOWN) - 1:
+                ax.text(1.03, 0.5, topology.upper(), transform=ax.transAxes, rotation=270,
+                        ha="left", va="center", fontsize=LABEL_FS, fontweight="bold")
             if i == len(TOPOLOGIES) - 1 and j == len(PCT_MODS_SHOWN) // 2:
                 ax.set_xlabel("Flows KO (%)", fontsize=LABEL_FS)
 
@@ -541,7 +559,10 @@ def speedup_vs_workload_scatter_iaag():
         ax.tick_params(labelsize=14)
         ax.set_title(f"Perturbation = {int(pct_mod * 100)}%", fontsize=TITLE_FS, fontweight="bold")
         if j == 0:
-            ax.set_ylabel("$\\mathbf{IAAG}$\nSpeedup", fontsize=LABEL_FS)
+            ax.set_ylabel("Speedup", fontsize=LABEL_FS)
+        if j == len(PCT_MODS_SHOWN) - 1:
+            ax.text(1.03, 0.5, "IAAG", transform=ax.transAxes, rotation=270,
+                    ha="left", va="center", fontsize=LABEL_FS, fontweight="bold")
         if j == len(PCT_MODS_SHOWN) // 2:
             ax.set_xlabel("Flows KO (%)", fontsize=LABEL_FS)
 

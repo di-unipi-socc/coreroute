@@ -225,9 +225,8 @@ def _disegna_riga_tempo(ax_riga, dati, massimo, num_flows, etichetta_flussi=True
             ax.set_ylabel("Execution Time [s]", fontsize=LABEL_FS)
 
     if etichetta_flussi:
-        ax_riga[0].annotate(f"flows = {num_flows}", xy=(0, 0.5), xycoords="axes fraction",
-                            xytext=(-90, 0), textcoords="offset points", rotation=90,
-                            ha="center", va="center", fontsize=TITLE_FS, fontweight="bold", color=g.INK)
+        ax_riga[-1].text(1.03, 0.5, f"flows = {num_flows}", transform=ax_riga[-1].transAxes, rotation=270,
+                         ha="left", va="center", fontsize=LABEL_FS, fontweight="bold", color=g.INK)
     ax_riga[0].set_ylim(-0.04 * massimo, massimo * 1.4)
     handles, labels = ax_riga[0].get_legend_handles_labels()
     ax_riga[0].legend(handles, labels, frameon=False, fontsize=LEGEND_FS, loc="upper left")
@@ -305,6 +304,9 @@ def plot_tempo_griglia_flussi_topologia(df: pd.DataFrame) -> None:
                 ax.set_xlabel("Repaired Flows", fontsize=LABEL_FS)
             if colonna == 0:
                 ax.set_ylabel("Execution Time [s]", fontsize=LABEL_FS)
+            if colonna == len(g.TOPOLOGIE_ORDINATE) - 1:
+                ax.text(1.03, 0.5, f"nodes = {n}", transform=ax.transAxes, rotation=270,
+                        ha="left", va="center", fontsize=LABEL_FS, fontweight="bold", color=g.INK)
 
         assi[riga][0].set_ylim(-0.04 * massimo, massimo * 1.4)
         handles, labels = assi[riga][0].get_legend_handles_labels()
@@ -345,7 +347,10 @@ def plot_tempo_per_nko(df: pd.DataFrame) -> None:
             g._pulisci_assi(ax, alpha=0.2)
             ax.tick_params(axis="both", labelsize=16)
             if colonna == 0:
-                ax.set_ylabel(f"N_KO={n_ko}\nExecution Time [s]", fontsize=LABEL_FS)
+                ax.set_ylabel("Execution Time [s]", fontsize=LABEL_FS)
+            if colonna == len(g.TOPOLOGIE_ORDINATE) - 1:
+                ax.text(1.03, 0.5, f"N_KO = {n_ko}", transform=ax.transAxes, rotation=270,
+                        ha="left", va="center", fontsize=LABEL_FS, fontweight="bold", color=g.INK)
             if riga == len(NKO_RIGHE) - 1 and colonna == len(g.TOPOLOGIE_ORDINATE) // 2:
                 ax.set_xlabel("Nodes", fontsize=LABEL_FS)
 
@@ -400,8 +405,8 @@ def plot_tempo_epoche_comuni(df: pd.DataFrame) -> None:
             if riga == len(NUM_FLOWS) - 1 and colonna == len(g.TOPOLOGIE_ORDINATE) // 2:
                 ax.set_xlabel("Nodes", fontsize=LABEL_FS)
 
-        assi[riga][1].text(0.5, 1.38 if riga == 0 else 1.05, f"flows = {num_flows}", transform=assi[riga][1].transAxes,
-                            ha="center", fontsize=TITLE_FS, color=g.INK)
+        assi[riga][-1].text(1.03, 0.5, f"flows = {num_flows}", transform=assi[riga][-1].transAxes, rotation=270,
+                            ha="left", va="center", fontsize=LABEL_FS, fontweight="bold", color=g.INK)
         massimo_riga = agg[agg["num_flows"] == num_flows]["mean"].max()
         assi[riga][0].set_ylim(-0.04 * massimo_riga, massimo_riga * 1.1)
         handles, labels = assi[riga][0].get_legend_handles_labels()
