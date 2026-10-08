@@ -615,9 +615,50 @@ def failed_flows():
     print(f"Saved {out_path}")
 
 
+def flows_changed_pct():
+    """Share of flows whose path changed (flows_changed / num_flows), CR vs FR:
+    one panel per topology (columns) x perturbation level (rows), nodes on x.
+    Pooled over flow_factor, epoch and seed."""
+    sub = df.copy()
+    sub["pct_changed"] = 100 * sub["flows_changed"] / sub["num_flows"]
+
+    fig, axes = plt.subplots(len(PCT_MODS), len(TOPOLOGIES), figsize=(16, 14), sharex=True, sharey=True)
+    for i, pct_mod in enumerate(PCT_MODS):
+        for j, topology in enumerate(TOPOLOGIES):
+            ax = axes[i, j]
+            cell = sub[(sub["pct_mod"] == pct_mod) & (sub["topology"] == topology)]
+            for mode, color in MODE_COLORS.items():
+                line = cell[cell["mode"] == mode].groupby("n")["pct_changed"].mean().reindex(NODES)
+                ax.plot(NODES, line.values, marker="o", color=color)
+            ax.set_xticks(NODES)
+            ax.tick_params(labelsize=14)
+            if i == 0:
+                ax.set_title(topology.upper(), fontsize=TITLE_FS, fontweight="bold")
+            if j == 0:
+                ax.set_ylabel("Flows changed (%)", fontsize=LABEL_FS)
+            if j == len(TOPOLOGIES) - 1:
+                ax.text(1.03, 0.5, f"Perturbation = {int(pct_mod * 100)}%", transform=ax.transAxes, rotation=270,
+                        ha="left", va="center", fontsize=LABEL_FS, fontweight="bold")
+            if i == len(PCT_MODS) - 1 and j == len(TOPOLOGIES) // 2:
+                ax.set_xlabel("Nodes", fontsize=LABEL_FS)
+
+    handles = [Line2D([0], [0], marker="o", color=c, markersize=10,
+                      label=("FR" if m == "FULL" else m))
+               for m, c in MODE_COLORS.items()]
+    fig.legend(handles=handles, loc="upper center", bbox_to_anchor=(0.5, 1.03),
+               ncol=len(handles), fontsize=LEGEND_FS, frameon=False)
+
+    plt.tight_layout()
+    out_path = "plots/flows_changed_pct.pdf"
+    plt.savefig(out_path, bbox_inches="tight")
+    plt.close(fig)
+    print(f"Saved {out_path}")
+
+
 if __name__ == "__main__":
     diff_simm_vs_latency_iaag()
     diff_simm_vs_latency()
     speedup_heatmap()
     speedup_vs_workload_scatter_topology_pctmod()
     failed_flows()
+    flows_changed_pct()
